@@ -1,2 +1,2 @@
-# Defy-Liquidity-Yield-Tracker
-Defy Liquidity &amp; Yield Tracker (DELYT)
+# DeFi-Liquidity-Yield-Tracker
+DeFi Liquidity &amp; Yield Tracker (DELYT)
