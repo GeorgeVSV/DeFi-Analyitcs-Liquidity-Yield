@@ -1,0 +1,4 @@
+requests
+pandas
+web3
+python-dotenv
