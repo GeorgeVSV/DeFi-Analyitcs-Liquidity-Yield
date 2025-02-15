@@ -1,4 +1,4 @@
-# DeFi-Analytics-Liquidity-Yield
+# DeFi-Analytics-Liquidity-Yield (DALY)
 DeFi Analytics tool for Liquidity & Yield
 
 ### Overview
