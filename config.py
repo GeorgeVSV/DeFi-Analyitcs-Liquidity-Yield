@@ -5,59 +5,57 @@ from web3 import Web3
 # Load environment variables from .env
 load_dotenv()
 
-# List of required environment variables
+# --- Required Environment Variables ---
+"""
+This section loads required API keys and RPC URLs from the .env file.
+Each key is documented to clarify its purpose.
+
+ENVIRONMENT VARIABLES:
+- ETH_INFURA_RPC_URL: The Infura RPC URL for connecting to Ethereum.
+- ETHERSCAN_API_KEY: API key for interacting with Etherscan's API.
+"""
+
+ETH_INFURA_RPC_URL = os.getenv("ETH_INFURA_RPC_URL")
+ETHERSCAN_API_KEY = os.getenv("ETHERSCAN_API_KEY")
+
+# Ensure all required secrets are loaded
 REQUIRED_ENV_VARS = [
     "ETH_INFURA_RPC_URL",
-    "ETHERSCAN_API_KEY",
-    "AAVE_DATA_PROVIDER_ADDRESS"
+    "ETHERSCAN_API_KEY"
 ]
-
-# Check for missing required environment variables
 missing_vars = [var for var in REQUIRED_ENV_VARS if not os.getenv(var)]
 if missing_vars:
     raise ValueError(f"Missing required environment variables: {', '.join(missing_vars)}")
 
-# Assign environment variables with documentation
-ETHERSCAN_API_KEY: str = os.getenv("ETHERSCAN_API_KEY", "")
+# --- Web3 Initialization ---
 """
-ETHERSCAN_API_KEY:
-    Etherscan API key, used for fetching verified ABIs from the Etherscan API.
+A single Web3 instance is initialized globally to prevent multiple redundant connections.
+This should be imported and used across all modules that require Web3 interaction.
+"""
+WEB3_INSTANCE = Web3(Web3.HTTPProvider(ETH_INFURA_RPC_URL))
+
+# --- Etherscan API Configuration ---
+"""
+Etherscan API Endpoints:
+- ETHERSCAN_API_URL: The base URL for Etherscan API requests.
+- ETHERSCAN_GET_ABI_ENDPOINT: Fetches contract ABI from Etherscan for verified contracts.
 """
 
-ETH_INFURA_RPC_URL: str = os.getenv("ETH_INFURA_RPC_URL", "")
+ETHERSCAN_API_URL = "https://api.etherscan.io/api"
+ETHERSCAN_GET_ABI_ENDPOINT = (
+    f"{ETHERSCAN_API_URL}?module=contract&action=getabi&address={{address}}&apikey={ETHERSCAN_API_KEY}"
+)
+
+# --- Protocol Configuration ---
 """
-ETH_INFURA_RPC_URL:
-    The RPC endpoint provided by Infura.
-    Typically https://mainnet.infura.io/v3/<API_KEY>
+Each DeFi protocol has:
+- data_provider: Smart contract address for fetching protocol data.
+- abi_path: The local path to the ABI file (used as a fallback if fetching ABI fails).
 """
 
-AAVE_DATA_PROVIDER_ADDRESS: str = os.getenv("AAVE_DATA_PROVIDER_ADDRESS", "")
-"""
-AAVE_DATA_PROVIDER_ADDRESS:
-    The on-chain address for the Aave data provider contract.
-    Taken from official AAVE protocol docs: https://aave.com/docs/resources/addresses
-"""
-
-# Initialize Web3 only once
-WEB3 = Web3(Web3.HTTPProvider(ETH_INFURA_RPC_URL))
-"""
-WEB3:
-    A globally initialized Web3 instance using the configured Ethereum RPC.
-"""
-
-# Protocol Configuration
 PROTOCOLS = {
     "Aave": {
-        "data_provider": AAVE_DATA_PROVIDER_ADDRESS,
+        "data_provider": "0x41393e5e337606dc3821075Af65AeE84D7688CBD",
         "abi_path": "abis/aave.json",
     },
-    "Compound": {
-        "data_provider": "0xc3d688B66703497DAA19211EEdff47f25384cdc3",
-        "abi_path": "abis/compound.json",
-    }
 }
-"""
-PROTOCOLS:
-    Dictionary mapping protocol names to their contract addresses and ABI paths.
-    This allows the DeFi fetcher to dynamically load protocol data.
-"""
