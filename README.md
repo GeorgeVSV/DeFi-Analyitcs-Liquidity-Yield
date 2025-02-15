@@ -1,5 +1,5 @@
-# Defy-Analytics-Liquidity-Yield
-Defy Analytics tool for Liquidity & Yield
+# DeFi-Analytics-Liquidity-Yield
+DeFi Analytics tool for Liquidity & Yield
 
 ### Overview
 This repository provides an analytics solution for fetching real-time lending, borrowing, and liquidity data from DeFi protocols. Aave, Compound V3, and Uniswap are currently supported, and the modular architecture allows for straightforward integration of additional protocols. Data retrieval is managed through Web3.py, with contract ABIs fetched on-demand from Etherscan. The tool calculates key metrics such as interest rates, collateral factors, and total liquidity, then organizes the results in Pandas DataFrames for convenient analysis.
