@@ -1,9 +1,18 @@
 import pandas as pd
-from typing import List
+from typing import List, Dict
 from datetime import datetime, timezone
 
 class DataProcessor:
-    """Processes raw reserve data into structured, human-readable formats."""
+    """
+    A class to process raw on-chain data into structured, human-readable formats.
+
+    This includes reserve data, borrowing/lending metrics, utilization rates, and
+    APY calculations for DeFi protocols.
+
+    Attributes:
+        RAY (int): Scaling factor for ray-based calculations (1e27).
+        SECONDS_PER_YEAR (int): Total seconds in a year (for interest calculations).
+    """
 
     RAY = 10**27  # Scaling factor for Ray format
     SECONDS_PER_YEAR = 31_536_000  # 365 days
@@ -12,25 +21,9 @@ class DataProcessor:
         """Initializes the DataProcessor."""
         pass
 
-    def process_reserve_data(self, raw_data: List, protocol: str) -> pd.DataFrame:
+    def aave_process_reserve_data(self, raw_data: List) -> pd.DataFrame:
         """
-        Generalized processing function that routes to the correct protocol-specific processing method.
-
-        Args:
-            raw_data (List): The raw response from a DataFetcher method.
-            protocol (str): The DeFi protocol name.
-
-        Returns:
-            pd.DataFrame: A structured DataFrame containing processed metrics.
-        """
-        if protocol.lower() == "aave":
-            return self._process_aave_reserve_data(raw_data)
-        else:
-            raise ValueError(f"Protocol {protocol} is not supported yet.")
-
-    def _process_aave_reserve_data(self, raw_data: List) -> pd.DataFrame:
-        """
-        Processes raw reserve data from Aave into a structured Pandas DataFrame.
+        Processes Aave V3 reserve data into a structured Pandas DataFrame.
 
         Args:
             raw_data (List): The raw response from `DataFetcher.aave_fetch_reserve_data()`.
@@ -100,7 +93,6 @@ class DataProcessor:
                 "supply_cap": supply_cap,
                 "load_datetime": datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S")
             }
-
             processed_data.append(asset_data)
 
         return pd.DataFrame(processed_data)
