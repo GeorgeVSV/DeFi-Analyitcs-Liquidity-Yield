@@ -1,7 +1,7 @@
 import os
 import json
 import requests
-from typing import Any, Tuple
+from typing import Any, List
 import web3
 from config import WEB3_INSTANCE, PROTOCOLS, ETHERSCAN_GET_ABI_ENDPOINT
 
@@ -92,12 +92,12 @@ class DataFetcher:
 
     # === Protocol-Specific Methods ===
 
-    def aave_fetch_reserve_data(self) -> Tuple[Any, Any]:
+    def aave_fetch_reserve_data(self) -> List[Any]:
         """
         Fetches all raw reserve data for Aave using UiPoolDataProvider.
 
         Returns:
-            Tuple[Any, Any]: The raw response from the Aave contract.
+            List[Any]: The raw response from the Aave contract.
         """
         ui_provider_contract = self.get_contract("Aave", "ui_pool_data_provider")
         provider_address = PROTOCOLS["Aave"]["pool_addresses_provider"]

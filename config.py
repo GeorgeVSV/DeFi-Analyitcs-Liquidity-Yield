@@ -56,6 +56,7 @@ For Aave fetching required 2 smart contract addressees:
 PROTOCOLS = {
     "Aave": {
         "pool_addresses_provider": "0x2f39d218133AFaB8F2B819B1066c7E434Ad94E9e",  # Aave V3 on Ethereum Mainnet
+        "pool_data_provider": "0x41393e5e337606dc3821075Af65AeE84D7688CBD",  # Aave V3 Pool Data Provider
         "ui_pool_data_provider": "0x3F78BBD206e4D3c504Eb854232EdA7e47E9Fd8FC",  # Aave V3 UI Pool Data Provider
         "abi_paths": {
             "UiPoolDataProvider": "abis/aave_ui_pool_data_provider.json"
