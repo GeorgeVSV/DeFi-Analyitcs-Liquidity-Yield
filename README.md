@@ -1,5 +1,5 @@
 # DeFi-Analytics-Liquidity-Yield (DALY)
-**A professional-grade DeFi analytics tool for real-time liquidity & yield tracking.**
+**DeFi analytics tool for real-time liquidity & yield tracking.**
 
 ## **Overview**
 **DALY** provides a structured analytics solution for fetching and analyzing **lending, borrowing, and liquidity data** from DeFi protocols. The tool currently supports **Aave V3**, with planned expansion to **Compound V3** and **Uniswap**. 
