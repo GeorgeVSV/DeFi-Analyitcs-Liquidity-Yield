@@ -46,16 +46,19 @@ ETHERSCAN_GET_ABI_ENDPOINT = (
     f"{ETHERSCAN_API_URL}?module=contract&action=getabi&address={{address}}&apikey={ETHERSCAN_API_KEY}"
 )
 
-# --- Protocol Configuration ---
+# --- Hardcoded Addresses for Aave ---
 """
-Each DeFi protocol has:
-- data_provider: Smart contract address for fetching protocol data.
-- abi_path: The local path to the ABI file (used as a fallback if fetching ABI fails).
+For Aave fetching required 2 smart contract addressees:
+- POOL_ADDRESSES_PROVIDER: The registry contract for Aave V3.
+- UI_POOL_DATA_PROVIDER: The contract for fetching all reserve data in one call.
 """
 
 PROTOCOLS = {
     "Aave": {
-        "data_provider": "0x41393e5e337606dc3821075Af65AeE84D7688CBD",
-        "abi_path": "abis/aave.json",
-    },
+        "pool_addresses_provider": "0x2f39d218133AFaB8F2B819B1066c7E434Ad94E9e",  # Aave V3 on Ethereum Mainnet
+        "ui_pool_data_provider": "0x3F78BBD206e4D3c504Eb854232EdA7e47E9Fd8FC",  # Aave V3 UI Pool Data Provider
+        "abi_paths": {
+            "UiPoolDataProvider": "abis/aave_ui_pool_data_provider.json"
+        }
+    }
 }
