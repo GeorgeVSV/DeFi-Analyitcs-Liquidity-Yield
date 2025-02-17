@@ -11,7 +11,7 @@
 - **Financial Metric Computation:** Computes **TVL (Total Value Locked), Utilization Rate, Lending APY, Borrowing APY, and Collateral Metrics**.
 - **Optimized Data Handling:** Outputs structured **Pandas DataFrames** for further analysis and visualization.
 
-## **API Credentials Reminder**
+## **API Credentials Reminder** 
 Before running the tool, set your **Etherscan API key**:
 ETHERSCAN_API_KEY=your_api_key
 
