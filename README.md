@@ -18,7 +18,7 @@ ETHERSCAN_API_KEY=your_api_key
 ## **Project Architecture**
 DALY follows a **modular OOP structure** with a clear separation of concerns:
 
-### **1. Fetching Layer – `DataFetcher`**
+### **1. Fetching Layer – `DataFetcher`** 
 Handles **on-chain data retrieval** for each protocol:
 - Uses `Web3.py` to call smart contract functions.
 - Fetches ABIs dynamically from **Etherscan**.
