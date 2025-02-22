@@ -66,7 +66,10 @@ PROTOCOLS = {
         "ui_pool_data_provider": "0x3F78BBD206e4D3c504Eb854232EdA7e47E9Fd8FC",
     },
     "Compound": {
-        "usdc_comet": "0xaeC1954467B6d823A9042E9e9D6E4F40111069a9",
-        "weth_comet": "0x1a7E64b593a9B8796e88a7489a2CEb6d079C850d",
+        # Naming convention for Compound V3: "<network>_<base_asset>_<contract_type>"
+        # Ensures clarity for multi-chain support and contract distinctions
+        "ethereum_usdc_proxy": "0xc3d688B66703497DAA19211EEdff47f25384cdc3",
+        "ethereum_usdc_implementation": "0xaeC1954467B6d823A9042E9e9D6E4F40111069a9",
+        "ethereum_weth_proxy": "0xA17581A9E3356d9A858b789D68B4d866e593aE94",
     }
 }
