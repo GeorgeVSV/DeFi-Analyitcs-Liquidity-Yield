@@ -1,9 +1,14 @@
 import os
 import json
+import logging
 import requests
 from typing import Any, List
 import web3
 from config import WEB3_INSTANCE, PROTOCOLS, ETHERSCAN_GET_ABI_ENDPOINT
+
+# Configure logging
+logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
+logger = logging.getLogger(__name__)
 
 class DataFetcher:
     """
@@ -89,6 +94,47 @@ class DataFetcher:
             raise FileNotFoundError(f"ABI file not found: {abi_path}")
         with open(abi_path, "r") as file:
             return json.load(file)
+
+    def save_abi_to_json(self, contract_address: str, file_name: str, save_path: str):
+        """
+        Fetches the ABI of a given contract from Etherscan and saves it as a JSON file.
+
+        Args:
+            contract_address (str): Address of the contract.
+            file_name (str): Name of the JSON file to save (without .json extension).
+            save_path (str): Directory where the file should be saved.
+
+        Returns:
+            str: Full path of the saved ABI file, or None if failed.
+        """
+        try:
+            # Fetch ABI using the existing method
+            abi = self.fetch_abi_from_etherscan(contract_address)
+
+            if not abi:
+                logger.error(f"Failed to fetch ABI for {contract_address} from Etherscan.")
+                return None
+
+            # Ensure the save directory exists
+            os.makedirs(save_path, exist_ok=True)
+
+            # Define full file path
+            full_file_path = os.path.join(save_path, f"{file_name}.json")
+
+            # Check if the file already exists
+            if os.path.exists(full_file_path):
+                logger.info(f"Overwriting existing ABI file: {full_file_path}")
+
+            # Save ABI to JSON file
+            with open(full_file_path, "w") as json_file:
+                json.dump(abi, json_file, indent=4)
+
+            logger.info(f"ABI for contract {contract_address} saved to {full_file_path}")
+            return full_file_path
+
+        except Exception as e:
+            logger.exception(f"Error saving ABI for contract {contract_address}: {e}")
+            return None
 
     # === Protocol-Specific Methods ===
 
