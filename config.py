@@ -62,7 +62,6 @@ For Aave fetching required 2 smart contract addressees:
 PROTOCOLS = {
     "Aave": {
         "pool_addresses_provider": "0x2f39d218133AFaB8F2B819B1066c7E434Ad94E9e",
-        "pool_data_provider": "0x41393e5e337606dc3821075Af65AeE84D7688CBD",
         "ui_pool_data_provider": "0x3F78BBD206e4D3c504Eb854232EdA7e47E9Fd8FC",
     },
     "Compound": {
