@@ -24,16 +24,20 @@ class DataFetcher:
         """
         self.web3_instance = WEB3_INSTANCE
 
-    def get_contract(self, protocol: str, contract_name: str) -> web3.contract.Contract:
+    def get_contract(self, protocol: str, contract_name: str, abi_path: str = None) -> web3.eth.Contract:
         """
         Returns a contract instance for a given protocol contract.
+
+        - If an ABI file path is provided, it must use that file (no fallback).
+        - If no ABI path is provided, it must always fetch from Etherscan.
 
         Args:
             protocol (str): The protocol name.
             contract_name (str): The name of the contract to fetch (must match keys in PROTOCOLS[protocol]).
+            abi_path (str, optional): Path to the JSON file containing the ABI. If None, it fetches from Etherscan.
 
         Returns:
-            web3.contract.Contract: The Web3 contract instance.
+            Web3.eth.Contract: The Web3 contract instance.
         """
         config = PROTOCOLS.get(protocol)
         if not config:
@@ -43,9 +47,16 @@ class DataFetcher:
         if not contract_address:
             raise ValueError(f"Contract '{contract_name}' not found in protocol '{protocol}'.")
 
-        contract_abi = self.get_abi(contract_address, config["abi_paths"].get(contract_name, ""))
-        return self.web3_instance.eth.contract(address=contract_address, abi=contract_abi)
+        # Strict decision: Either load from file OR fetch from Etherscan
+        if abi_path:
+            contract_abi = self.load_abi_from_file(abi_path)
+            logger.info(f"Loaded ABI from file for {protocol} ({contract_name}) at {abi_path}")
+        else:
+            contract_abi = self.fetch_abi_from_etherscan(contract_address)
+            logger.info(f"Fetched ABI from Etherscan for {protocol} ({contract_name}) at {contract_address}")
 
+        return self.web3_instance.eth.contract(address=contract_address, abi=contract_abi)
+    
     def get_abi(self, contract_address: str, abi_path: str) -> Any:
         """
         Attempts to fetch ABI from Etherscan first, then falls back to loading from a local file.

@@ -1,6 +1,11 @@
 import os
+import logging
 from dotenv import load_dotenv
 from web3 import Web3
+
+# Configure logging
+logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
+logger = logging.getLogger(__name__)
 
 # Load environment variables from .env
 load_dotenv()
@@ -53,13 +58,15 @@ For Aave fetching required 2 smart contract addressees:
 - UI_POOL_DATA_PROVIDER: The contract for fetching all reserve data in one call.
 """
 
+# --- Protocols Configuration ---
 PROTOCOLS = {
     "Aave": {
-        "pool_addresses_provider": "0x2f39d218133AFaB8F2B819B1066c7E434Ad94E9e",  # Aave V3 on Ethereum Mainnet
-        "pool_data_provider": "0x41393e5e337606dc3821075Af65AeE84D7688CBD",  # Aave V3 Pool Data Provider
-        "ui_pool_data_provider": "0x3F78BBD206e4D3c504Eb854232EdA7e47E9Fd8FC",  # Aave V3 UI Pool Data Provider
-        "abi_paths": {
-            "UiPoolDataProvider": "abis/aave_ui_pool_data_provider.json"
-        }
+        "pool_addresses_provider": "0x2f39d218133AFaB8F2B819B1066c7E434Ad94E9e",
+        "pool_data_provider": "0x41393e5e337606dc3821075Af65AeE84D7688CBD",
+        "ui_pool_data_provider": "0x3F78BBD206e4D3c504Eb854232EdA7e47E9Fd8FC",
+    },
+    "Compound": {
+        "usdc_comet": "0xaeC1954467B6d823A9042E9e9D6E4F40111069a9",
+        "weth_comet": "0x1a7E64b593a9B8796e88a7489a2CEb6d079C850d",
     }
 }
