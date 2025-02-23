@@ -60,15 +60,27 @@ For Aave fetching required 2 smart contract addressees:
 
 # --- Protocols Configuration ---
 PROTOCOLS = {
-    "Aave": {
-        "pool_addresses_provider": "0x2f39d218133AFaB8F2B819B1066c7E434Ad94E9e",
-        "ui_pool_data_provider": "0x3F78BBD206e4D3c504Eb854232EdA7e47E9Fd8FC",
+    # Storing structure for Aave V3: "network : market_type : smart_contracts"
+    # Ensures clarity for multi-network support and smart contract distinctions
+    "aave": {
+        "ethereum": {
+            "core_market": {
+                    "pool_addresses_provider": "0x2f39d218133AFaB8F2B819B1066c7E434Ad94E9e",
+                    "ui_pool_data_provider": "0x3F78BBD206e4D3c504Eb854232EdA7e47E9Fd8FC",
+            }
+        }       
     },
-    "Compound": {
-        # Naming convention for Compound V3: "<network>_<base_asset>_<contract_type>"
-        # Ensures clarity for multi-chain support and contract distinctions
-        "ethereum_usdc_proxy": "0xc3d688B66703497DAA19211EEdff47f25384cdc3",
-        "ethereum_usdc_implementation": "0xaeC1954467B6d823A9042E9e9D6E4F40111069a9",
-        "ethereum_weth_proxy": "0xA17581A9E3356d9A858b789D68B4d866e593aE94",
+    "compound": {
+        # Storing structure for Compound V3: "network : base_asset : smart_contracts"
+        # Ensures clarity for multi-chain support and smart contract distinctions
+        "ethereum": {
+            "usdc": {
+                    "proxy": "0xc3d688B66703497DAA19211EEdff47f25384cdc3",
+                    "implementation": "0xaeC1954467B6d823A9042E9e9D6E4F40111069a9",
+                },
+            "weth": {
+                    "proxy": "0xc3d688B66703497DAA19211EEdff47f25384cdc3",
+                },
+        }   
     }
 }
