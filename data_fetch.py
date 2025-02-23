@@ -24,7 +24,9 @@ class DataFetcher:
         """
         self.web3_instance = WEB3_INSTANCE
 
-    def get_contract(self, protocol: str, contract_name: str, abi_path: str = None) -> web3.eth.Contract:
+    def get_contract(self, protocol: str, network: str,
+                    base_asset: str = None, contract_type: str = None,
+                    market_type: str = None, abi_path: str = None) -> web3.eth.Contract:
         """
         Returns a contract instance for a given protocol contract.
 
@@ -32,8 +34,12 @@ class DataFetcher:
         - If no ABI path is provided, it must always fetch from Etherscan.
 
         Args:
-            protocol (str): The protocol name.
-            contract_name (str): The name of the contract to fetch (must match keys in PROTOCOLS[protocol]).
+            protocol (str): The protocol name (e.g., 'aave', 'compound').
+            network (str): The blockchain network (e.g., 'ethereum', 'polygon').
+            base_asset (str, optional): Required for Compound (e.g., 'usdc', 'weth'). Not used for Aave.
+            contract_type (str, optional): The specific contract type for Compound (e.g., 'proxy', 'implementation')
+                                        or for Aave (e.g., 'pool_addresses_provider', 'ui_pool_data_provider').
+            market_type (str, optional): Required for Aave (e.g., 'prime_market'). Not used for Compound.
             abi_path (str, optional): Path to the JSON file containing the ABI. If None, it fetches from Etherscan.
 
         Returns:
@@ -43,19 +49,35 @@ class DataFetcher:
         if not config:
             raise ValueError(f"Protocol '{protocol}' not found in config.")
 
-        contract_address = config.get(contract_name)
+        contract_address = None  # Default to None
+
+        # Explicit validation and fetching logic for each protocol
+        if protocol == "aave":
+            if not market_type or not contract_type:
+                raise ValueError("Aave requires both 'market_type' and 'contract_type'.")
+            contract_address = config[network][market_type].get(contract_type)
+
+        elif protocol == "compound":
+            if not base_asset or not contract_type:
+                raise ValueError("Compound requires both 'base_asset' and 'contract_type'.")
+            contract_address = config[network][base_asset].get(contract_type)
+
+        else:
+            raise ValueError(f"Unsupported protocol '{protocol}'.")
+
         if not contract_address:
-            raise ValueError(f"Contract '{contract_name}' not found in protocol '{protocol}'.")
+            raise ValueError(f"Contract '{contract_type}' not found for '{protocol}' on {network}.")
 
         # Strict decision: Either load from file OR fetch from Etherscan
         if abi_path:
             contract_abi = self.load_abi_from_file(abi_path)
-            logger.info(f"Loaded ABI from file for {protocol} ({contract_name}) at {abi_path}")
+            logger.info(f"Loaded ABI from file for {protocol} ({contract_type}) at {abi_path}")
         else:
             contract_abi = self.fetch_abi_from_etherscan(contract_address)
-            logger.info(f"Fetched ABI from Etherscan for {protocol} ({contract_name}) at {contract_address}")
+            logger.info(f"Fetched ABI from Etherscan for {protocol} ({contract_type}) at {contract_address}")
 
         return self.web3_instance.eth.contract(address=contract_address, abi=contract_abi)
+
     
     def get_abi(self, contract_address: str, abi_path: str) -> Any:
         """
@@ -149,13 +171,19 @@ class DataFetcher:
 
     # === Protocol-Specific Methods ===
 
-    def aave_fetch_reserve_data(self) -> List[Any]:
+    def aave_fetch_reserve_data(self, network: str, market_type: str, contract_type: str = 'ui_pool_data_provider') -> List[Any]:
         """
-        Fetches all raw reserve data for Aave using UiPoolDataProvider.
+        Fetches all raw reserve data for Aave V3 using UiPoolDataProvider.
+
+        Args:
+            network (str): Name of the Aave V3 network (e.g. ethereum, polygon, base, etc.).
+            market_type (str): Name of the Aave V3 market (e.g. for Ethereum network there are core_market, prime_market, etherfi_market).
+            contract_type (str): Name of the Aave V3 smart contract (e.g. pool_addresses_provider, ui_pool_data_provider)
 
         Returns:
             List[Any]: The raw response from the Aave contract.
         """
-        ui_provider_contract = self.get_contract("Aave", "ui_pool_data_provider")
-        provider_address = PROTOCOLS["Aave"]["pool_addresses_provider"]
+
+        ui_provider_contract = self.get_contract("aave", network=network, market_type=market_type, contract_type=contract_type)
+        provider_address = PROTOCOLS["aave"][network][market_type]["pool_addresses_provider"]
         return ui_provider_contract.functions.getReservesData(provider_address).call()
