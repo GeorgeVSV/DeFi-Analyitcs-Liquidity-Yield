@@ -79,7 +79,7 @@ PROTOCOLS = {
                     "implementation": "0xaeC1954467B6d823A9042E9e9D6E4F40111069a9",
                 },
             "weth": {
-                    "proxy": "0xc3d688B66703497DAA19211EEdff47f25384cdc3",
+                    "proxy": "0xA17581A9E3356d9A858b789D68B4d866e593aE94",
                     "implementation": "0x1a7E64b593a9B8796e88a7489a2CEb6d079C850d",
                 },
         }   
