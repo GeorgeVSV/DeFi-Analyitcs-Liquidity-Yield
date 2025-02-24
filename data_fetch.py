@@ -2,7 +2,7 @@ import os
 import json
 import logging
 import requests
-from typing import Any, List
+from typing import Any, List, Dict
 import web3
 from config import WEB3_INSTANCE, PROTOCOLS, ETHERSCAN_GET_ABI_ENDPOINT
 
@@ -197,3 +197,45 @@ class DataFetcher:
         ui_provider_contract = self.get_contract("aave", network=network, market_type=market_type, contract_type=contract_type)
         provider_address = PROTOCOLS["aave"][network][market_type]["pool_addresses_provider"]
         return [ui_provider_contract.functions.getReservesData(provider_address).call(), network]
+
+    def compound_fetch_market_data(self, network: str) -> Dict[str, Any]:
+        """
+        Fetches key Compound v3 metrics for a given network for all avaible base assets.
+
+        Args:
+            network (str): Blockchain network (e.g., 'ethereum').
+
+        Returns:
+            List[Any]:  The raw response from the Compound including market metrics: supply, borrow, and utilization.
+        """
+
+        base_assets = PROTOCOLS['compound'][network]
+        raw_data = []
+
+        for base_asset in base_assets:
+            contract = self.get_contract("compound", network=network, base_asset=base_asset, contract_type="proxy", abi_contract_type='implementation')
+
+            # Fetch key metrics
+            total_supply = contract.functions.totalSupply().call()
+            total_borrow = contract.functions.totalBorrow().call()
+            utilization = contract.functions.getUtilization().call()
+            reserves = contract.functions.getReserves().call()
+
+            # Base asset & pricing
+            base_token = contract.functions.baseToken().call()
+            base_price_feed = contract.functions.baseTokenPriceFeed().call()
+            decimals = contract.functions.decimals().call()
+        
+            base_raw_data = {
+                "network": network,
+                "base_asset": base_asset,
+                "decimals": decimals,
+                "total_supply": total_supply,
+                "total_borrow": total_borrow,
+                "utilization_rate": utilization,
+                "reserves": reserves,
+                "base_token": base_token,
+                "base_price_feed": base_price_feed,
+            }
+            raw_data.append(base_raw_data)
+        return raw_data
