@@ -26,21 +26,22 @@ class DataFetcher:
 
     def get_contract(self, protocol: str, network: str,
                     base_asset: str = None, contract_type: str = None,
-                    market_type: str = None, abi_path: str = None) -> web3.eth.Contract:
+                    market_type: str = None, abi_path: str = None, abi_contract_type: str = None) -> web3.eth.Contract:
         """
         Returns a contract instance for a given protocol contract.
 
         - If an ABI file path is provided, it must use that file (no fallback).
         - If no ABI path is provided, it must always fetch from Etherscan.
+        - Special case for Compound: Uses proxy address for contract instance, but ABI from implementation contract.
 
         Args:
             protocol (str): The protocol name (e.g., 'aave', 'compound').
             network (str): The blockchain network (e.g., 'ethereum', 'polygon').
             base_asset (str, optional): Required for Compound (e.g., 'usdc', 'weth'). Not used for Aave.
-            contract_type (str, optional): The specific contract type for Compound (e.g., 'proxy', 'implementation')
-                                        or for Aave (e.g., 'pool_addresses_provider', 'ui_pool_data_provider').
-            market_type (str, optional): Required for Aave (e.g., 'prime_market'). Not used for Compound.
+            contract_type (str, optional): The specific contract type (e.g., 'proxy', 'implementation', or Aave contract types).
+            market_type (str, optional): Required for Aave (e.g., 'core_market', 'prime_market'). Not used for Compound.
             abi_path (str, optional): Path to the JSON file containing the ABI. If None, it fetches from Etherscan.
+            abi_contract_type (str, optional): **Used only for Compound** – Contract type name from `config.py` (e.g., `"implementation"`).
 
         Returns:
             Web3.eth.Contract: The Web3 contract instance.
@@ -56,11 +57,21 @@ class DataFetcher:
             if not market_type or not contract_type:
                 raise ValueError("Aave requires both 'market_type' and 'contract_type'.")
             contract_address = config[network][market_type].get(contract_type)
+            abi_fetch_address = contract_address
 
         elif protocol == "compound":
             if not base_asset or not contract_type:
                 raise ValueError("Compound requires both 'base_asset' and 'contract_type'.")
             contract_address = config[network][base_asset].get(contract_type)
+
+            # Compound special case: If `abi_contract_type` is provided, fetch ABI from that contract type
+            if abi_contract_type:
+                abi_fetch_address = config[network][base_asset].get(abi_contract_type)
+                if not abi_fetch_address:
+                    raise ValueError(f"ABI contract type '{abi_contract_type}' not found for Compound {base_asset} on {network}.")
+                logger.info(f"Fetching ABI from '{abi_contract_type}' contract: {abi_fetch_address} for proxy: {contract_address}")
+            else:
+                abi_fetch_address = contract_address  # Default ABI source
 
         else:
             raise ValueError(f"Unsupported protocol '{protocol}'.")
@@ -73,12 +84,11 @@ class DataFetcher:
             contract_abi = self.load_abi_from_file(abi_path)
             logger.info(f"Loaded ABI from file for {protocol} ({contract_type}) at {abi_path}")
         else:
-            contract_abi = self.fetch_abi_from_etherscan(contract_address)
-            logger.info(f"Fetched ABI from Etherscan for {protocol} ({contract_type}) at {contract_address}")
+            contract_abi = self.fetch_abi_from_etherscan(abi_fetch_address)
+            logger.info(f"Fetched ABI from Etherscan for {protocol} ({contract_type}) at {abi_fetch_address}")
 
         return self.web3_instance.eth.contract(address=contract_address, abi=contract_abi)
 
-    
     def get_abi(self, contract_address: str, abi_path: str) -> Any:
         """
         Attempts to fetch ABI from Etherscan first, then falls back to loading from a local file.
@@ -181,9 +191,9 @@ class DataFetcher:
             contract_type (str): Name of the Aave V3 smart contract (e.g. pool_addresses_provider, ui_pool_data_provider)
 
         Returns:
-            List[Any]: The raw response from the Aave contract.
+            List[Any]: The raw response from the Aave contract & network name.
         """
 
         ui_provider_contract = self.get_contract("aave", network=network, market_type=market_type, contract_type=contract_type)
         provider_address = PROTOCOLS["aave"][network][market_type]["pool_addresses_provider"]
-        return ui_provider_contract.functions.getReservesData(provider_address).call()
+        return [ui_provider_contract.functions.getReservesData(provider_address).call(), network]
