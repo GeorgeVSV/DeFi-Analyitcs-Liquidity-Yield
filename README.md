@@ -4,7 +4,7 @@
     MVP modules output (demo purpose only!!!)  
     
 ### Compound V3 (all base assets available on 2025-02-24) Ethereum net:
-![image](https://github.com/user-attachments/assets/cbaab574-deb9-44af-a9cc-33a106943f96)  
+![image](https://github.com/user-attachments/assets/d5c93cbd-d45a-4ad1-bd60-6ea5842a1d24)
 ### Aave V3 (prime market) Ethereum net:  
 ![image](https://github.com/user-attachments/assets/6e990a35-0515-4d25-9517-768c1d439f8d)  
 
