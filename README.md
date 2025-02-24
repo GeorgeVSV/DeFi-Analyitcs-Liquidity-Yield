@@ -1,11 +1,12 @@
 # DeFi-Analytics-Liquidity-Yield (DALY)
 **DeFi analytics tool for real-time liquidity & yield tracking.**
 
-## Aave V3 (prime market) & Compound V3 (all base assets available on 2025-02-24) Ethereum net MVP modules output (demo purpose only!!!)
-Compound part:
-![image](https://github.com/user-attachments/assets/cbaab574-deb9-44af-a9cc-33a106943f96)
-AAVE part:
-![image](https://github.com/user-attachments/assets/6e990a35-0515-4d25-9517-768c1d439f8d)
+    MVP modules output (demo purpose only!!!)  
+    
+### Compound V3 (all base assets available on 2025-02-24) Ethereum net:
+![image](https://github.com/user-attachments/assets/cbaab574-deb9-44af-a9cc-33a106943f96)  
+### Aave V3 (prime market) Ethereum net:  
+![image](https://github.com/user-attachments/assets/6e990a35-0515-4d25-9517-768c1d439f8d)  
 
 ## **Overview**
 **DALY** provides a structured analytics solution for fetching and analyzing **lending, borrowing, and liquidity data** from DeFi protocols. The tool currently supports **Aave V3**, with planned expansion to **Compound V3** and **Uniswap**. 
