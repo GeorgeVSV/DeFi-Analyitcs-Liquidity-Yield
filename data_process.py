@@ -112,7 +112,6 @@ class DataProcessor:
         """
         processed_data = []
         base_assets = raw_data
-        print(base_assets)
 
         for base_asset in base_assets:
             decimals = 10 ** base_asset["decimals"]

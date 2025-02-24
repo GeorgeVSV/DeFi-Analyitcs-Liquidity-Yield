@@ -82,6 +82,18 @@ PROTOCOLS = {
                     "proxy": "0xA17581A9E3356d9A858b789D68B4d866e593aE94",
                     "implementation": "0x1a7E64b593a9B8796e88a7489a2CEb6d079C850d",
                 },
+            "usdt": {
+                    "proxy": "0x3Afdc9BCA9213A35503b077a6072F3D0d5AB0840",
+                    "implementation": "0x0b4a278345DEAA4c7c61FdD2eB4AEC97e412a0d4",
+                },
+            "westETH": {
+                    "proxy": "0x3D0bb1ccaB520A66e607822fC55BC921738fAFE3",
+                    "implementation": "0x1F0aa640e4871793AC10029365febe4e8e4b1441",
+                },
+            "usds": {
+                    "proxy": "0x5D409e56D886231aDAf00c8775665AD0f9897b56",
+                    "implementation": "0xBC910e3659BDB03c133961760693DB9118C05B04",
+                },
         }   
     }
 }
