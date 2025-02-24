@@ -1,5 +1,5 @@
 import pandas as pd
-from typing import List, Dict
+from typing import List, Dict, Any
 from datetime import datetime, timezone
 
 class DataProcessor:
@@ -32,7 +32,9 @@ class DataProcessor:
             pd.DataFrame: A structured DataFrame containing processed metrics.
         """
         processed_data = []
-        reserves = raw_data[0]
+
+        reserves = raw_data[0][0]
+        network = raw_data[1]
 
         for asset in reserves:
             # Extract essential data
@@ -75,7 +77,8 @@ class DataProcessor:
 
             # Store processed asset data
             asset_data = {
-                "protocol": "Aave",
+                "protocol": "Aave V3",
+                "network": network,
                 "asset_address": asset_address,
                 "asset_name": asset_name,
                 "symbol": symbol,
@@ -95,4 +98,33 @@ class DataProcessor:
             }
             processed_data.append(asset_data)
 
+        return pd.DataFrame(processed_data)
+    
+    def process_compound_market_data(self, raw_data:List) -> pd.DataFrame:
+        """
+        Processes raw Compound v3 market data into a structured DataFrame.
+
+        Args:
+            raw_data (List[Any]): Raw fetched data.
+
+        Returns:
+            pd.DataFrame: Structured market metrics.
+        """
+        processed_data = []
+        base_assets = raw_data
+        print(base_assets)
+
+        for base_asset in base_assets:
+            decimals = 10 ** base_asset["decimals"]
+            base_asset_data = {
+                "protocol": "Compound V3",
+                "network": base_asset["network"],
+                "base_asset": base_asset["base_asset"],
+                "base_token": base_asset["base_token"],
+                "reserves": base_asset["reserves"] / decimals,
+                "total_supply": base_asset["total_supply"] / decimals,
+                "total_borrow": base_asset["total_borrow"] / decimals,
+                "utilization_rate_percent": base_asset["utilization_rate"] / 1e18 * 100,
+            }
+            processed_data.append(base_asset_data)
         return pd.DataFrame(processed_data)
