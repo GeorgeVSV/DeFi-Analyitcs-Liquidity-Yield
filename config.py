@@ -86,7 +86,7 @@ PROTOCOLS = {
                     "proxy": "0x3Afdc9BCA9213A35503b077a6072F3D0d5AB0840",
                     "implementation": "0x0b4a278345DEAA4c7c61FdD2eB4AEC97e412a0d4",
                 },
-            "westETH": {
+            "wstETH": {
                     "proxy": "0x3D0bb1ccaB520A66e607822fC55BC921738fAFE3",
                     "implementation": "0x1F0aa640e4871793AC10029365febe4e8e4b1441",
                 },
